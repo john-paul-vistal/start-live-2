@@ -107,7 +107,6 @@
                     }).then((result) => {
                         if (result.value) {
                             window.location = "/";
-                            socket.emit('leave', userName);
                         }
                     })
                 })

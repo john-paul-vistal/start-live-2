@@ -53,23 +53,24 @@ function reduceOnline() {
     return connectCounter -= 1
 }
 
-function getActiveUsers() {
+function getActiveUsers(socketid) {
     let result = activeUser.findIndex(user => user.userName == userName)
     if (result == -1 && userName != "") {
-        activeUser.push({ userName: userName, userImg: userImg })
+        activeUser.push({ id: socketid, userName: userName, userImg: userImg })
     }
     return activeUser
 }
 
-function leaveUser(name) {
-    let result = activeUser.findIndex(user => user.userName == name)
+function leaveUser(id) {
+    let result = activeUser.findIndex(user => user.id == id)
     activeUser.splice(result, 1)
     return activeUser
 }
 
 
 io.on('connection', function(socket) {
-    io.emit('active', getActiveUsers())
+    const newUserId = socket.id
+    io.emit('active', getActiveUsers(socket.id))
 
     io.emit("count", addOnline())
 
@@ -91,28 +92,25 @@ io.on('connection', function(socket) {
     let dateStamp = date.getFullYear() + "-" + date.getMonth() + 1 + "-" + date.getDate();
     let timeStamp = formatAMPM(date)
 
+    const result = activeUser.filter(user => user.id == socket.id);
     socket.broadcast.emit("message", {
         "sender": "StratBOT",
-        "message": `${userName}  joined the chat!`,
+        "message": `${result[0].userName}  joined the chat!`,
         "date": dateStamp,
         "time": timeStamp,
     })
 
-    socket.on('leave', function(name) {
-        io.emit('active', leaveUser(name))
-        io.emit("count", reduceOnline())
-    })
-
-
     //Broadcast if a user disconnect
     socket.on('disconnect', function() {
+        const result = activeUser.filter(user => user.id == socket.id);
+        io.emit('active', leaveUser(socket.id))
+        io.emit("count", reduceOnline())
         io.emit("message", {
             "sender": "StratBOT",
-            "message": `${userName}  left the chat!`,
+            "message": `${result[0].userName}  left the chat!`,
             "date": dateStamp,
             "time": timeStamp,
         })
-        io.emit('leave', userName);
     });
 
 });
