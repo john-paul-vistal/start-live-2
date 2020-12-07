@@ -116,7 +116,8 @@
 
                 $('#messageForm').submit(function() {
                     let date = new Date()
-                    let dateStamp = date.getFullYear() + "-" + date.getMonth() + 1 + "-" + date.getDate();
+                    let month = date.getMonth() + 1
+                    let dateStamp = date.getFullYear() + "-" + month + "-" + date.getDate();
                     let timeStamp = formatAMPM(date)
                     let message = {
                         "sender": userName,
