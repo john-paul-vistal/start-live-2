@@ -18,7 +18,7 @@ let connectCounter = 0
 var publicDir = require('path').join(__dirname, '/public');
 app.use(express.static(publicDir));
 
-app.get('/strat.com', function(req, res) {
+app.get('/', function(req, res) {
     res.render("login", { error: req.query.error })
 });
 

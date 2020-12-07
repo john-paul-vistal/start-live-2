@@ -106,7 +106,7 @@
                         confirmButtonText: 'Leave'
                     }).then((result) => {
                         if (result.value) {
-                            window.location = "/strat.com";
+                            window.location = "/";
                             socket.emit('leave', userName);
                         }
                     })
